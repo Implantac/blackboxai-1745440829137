@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Estoque - Use Hotel</title>
+  <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏨</text></svg>" />
+  <!-- jQuery and Plugins -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1a2234',
+            secondary: '#2a3245',
+            accent: '#ff9800',
+            'accent-dark': '#e08800',
+            'accent-light': 'rgba(255, 152, 0, 0.2)',
+            success: '#4CAF50',
+            warning: '#FFC107',
+            danger: '#F44336',
+            info: '#2196F3',
+            violet: '#8B5CF6',
+            blue: '#3B82F6',
+            green: '#10B981',
+            red: '#EF4444',
+            yellow: '#F59E0B',
+            pink: '#EC4899',
+            indigo: '#6366F1',
+            purple: '#8B5CF6',
+            orange: '#F97316',
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(42, 50, 69, 0.5);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 152, 0, 0.3);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 152, 0, 0.5);
+    }
+  </style>
+</head>
+<body id="body-pd" class="body-pd bg-primary text-white min-h-screen flex flex-col animate-fade-in">
+  <header class="header body-pd flex justify-between items-center p-4 border-b border-secondary shadow-inner-lg" id="header">
+    <div class="header_toggle cursor-pointer text-3xl hover:text-accent transition-colors" id="header-toggle">
+      <i class='bx bx-menu bx-x hover:animate-bounce-slow'></i>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden md:flex items-center gap-2 text-accent-light">
+        <i class="fas fa-user-circle text-xl"></i>
+        <span>Admin</span>
+      </div>
+      <a class="btn bg-secondary hover:bg-accent hover:shadow-glow text-accent hover:text-white px-3 py-1 rounded text-sm flex items-center gap-2 transition-all duration-300" href="index.html">
+        <i class="fa-solid fa-right-from-bracket"></i> Sair
+      </a>
+    </div>
+  </header>
+  <div class="flex flex-grow">
+    <nav class="l-navbar show-nav w-64 bg-secondary p-4 shadow-inner-lg animate-slide-in fixed md:relative z-50 h-full md:h-auto top-0 left-0 md:top-auto md:left-auto md:translate-x-0 transition-transform md:transition-none" id="nav-bar">
+      <div class="flex flex-col h-full">
+        <a class="nav_logo mb-6 block text-center transform hover:scale-105 transition-transform" href="#">
+          <div class="text-4xl text-accent mb-2"><i class="fas fa-hotel"></i></div>
+          <div class="text-xl font-bold text-accent">Use Hotel</div>
+        </a>
+        <div class="flex-grow space-y-2 overflow-y-auto">
+          <a href="home.html" class="nav_link flex items-center gap-3 p-2 text-white rounded hover:text-accent hover:bg-primary/20 transition-all">
+            <i class='bx bx-grid-alt nav_icon text-xl'></i> <span class="nav_name">Home</span>
+          </a>
+          <a href="clientes.html" class="nav_link flex items-center gap-3 p-2 text-white rounded hover:text-accent hover:bg-primary/20 transition-all">
+            <i class='bx bx-user nav_icon text-xl'></i> <span class="nav_name">Clientes</span>
+          </a>
+          <a href="reservas.html" class="nav_link flex items-center gap-3 p-2 text-white rounded hover:text-accent hover:bg-primary/20 transition-all">
+            <i class='bx bx-calendar-event nav_icon text-xl'></i> <span class="nav_name">Reservas</span>
+          </a>
+          <a href="estacionamento.html" class="nav_link flex items-center gap-3 p-2 text-white rounded hover:text-accent hover:bg-primary/20 transition-all">
+            <i class='bx bx-car nav_icon text-xl'></i> <span class="nav_name">Estacionamento</span>
+          </a>
+          <a href="acomodacoes.html" class="nav_link flex items-center gap-3 p-2 text-white rounded hover:text-accent hover:bg-primary/20 transition-all">
+            <i class='bx bx-hotel nav_icon text-xl'></i> <span class="nav_name">Acomodações</span>
+          </a>
+          <a href="estoque.html" class="nav_link flex items-center gap-3 p-2 text-accent font-semibold rounded hover:text-accent hover:bg-primary/20 transition-all">
+            <i class='bx bx-cabinet nav_icon text-xl'></i> <span class="nav_name">Estoque</span>
+          </a>
+          <a href="#" class="nav_link flex items-center gap-3 p-2 text-white rounded hover:text-accent hover:bg-primary/20 transition-all">
+            <i class='bx bx-fridge nav_icon text-xl'></i> <span class="nav_name">Frigobar</span>
+          </a>
+          <a href="#" class="nav_link flex items-center gap-3 p-2 text-white rounded hover:text-accent hover:bg-primary/20 transition-all">
+            <i class='bx bx-money-withdraw nav_icon text-xl'></i> <span class="nav_name">Financeiro</span>
+          </a>
+          <a href="#" class="nav_link flex items-center gap-3 p-2 text-white rounded hover:text-accent hover:bg-primary/20 transition-all">
+            <i class='bx bxs-credit-card-alt nav_icon text-xl'></i><span class="nav_name">Pagamentos</span>
+          </a>
+          <a href="#" class="nav_link flex items-center gap-3 p-2 text-white rounded hover:text-accent hover:bg-primary/20 transition-all">
+            <i class="bx bxs-building nav_icon text-xl"></i><span class="nav_name">Configurações do Hotel</span>
+          </a>
+        </div>
+        <div class="mt-4 pt-4 border-t border-primary/20">
+          <a href="#" class="nav_link flex items-center gap-3 p-2 text-white rounded hover:text-accent hover:bg-primary/20 transition-all">
+            <i class='bx bxs-lock-open nav_icon text-xl'></i> <span class="nav_name">Administrador</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+    <main class="flex-grow p-4 md:p-6 overflow-auto bg-gradient-to-br from-primary to-secondary">
+      <nav aria-label="Breadcrumb" class="mb-4 md:mb-6 flex items-center gap-2 text-accent-light animate-fade-in">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3 text-sm md:text-base">
+          <li class="inline-flex items-center">
+            <a href="#" class="inline-flex items-center text-accent hover:text-accent-dark transition-colors" aria-current="page">
+              <i class="fas fa-home" aria-hidden="true"></i>
+              <span class="sr-only">Home</span>
+            </a>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <i class="fas fa-chevron-right text-xs md:text-sm" aria-hidden="true"></i>
+              <a href="#" class="ml-1 text-accent" aria-current="page">Estoque</a>
+            </div>
+          </li>
+        </ol>
+      </nav>
+      <section class="mb-6 md:mb-8 animate-slide-in" aria-labelledby="estoque-title">
+        <h1 id="estoque-title" class="text-2xl md:text-3xl font-bold text-accent mb-2">Estoque</h1>
+        <p class="text-white text-sm md:text-base">Gerencie os itens do estoque do hotel</p>
+      </section>
+      <section aria-label="Lista de itens do estoque" class="overflow-auto rounded-lg shadow-lg bg-secondary/90 backdrop-blur-md p-4">
+        <table class="min-w-full table-auto border-collapse border border-secondary/50 text-white">
+          <thead>
+            <tr class="bg-primary/80">
+              <th class="border border-secondary/50 px-4 py-2 text-left">Item</th>
+              <th class="border border-secondary/50 px-4 py-2 text-left">Quantidade</th>
+              <th class="border border-secondary/50 px-4 py-2 text-left">Categoria</th>
+              <th class="border border-secondary/50 px-4 py-2 text-left">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="hover:bg-primary/50 transition-colors cursor-pointer">
+              <td class="border border-secondary/50 px-4 py-2">Sabonete</td>
+              <td class="border border-secondary/50 px-4 py-2">50</td>
+              <td class="border border-secondary/50 px-4 py-2">Higiene</td>
+              <td class="border border-secondary/50 px-4 py-2">
+                <button class="bg-accent hover:bg-accent-dark text-primary px-3 py-1 rounded mr-2 transition-all focus:outline-none focus:ring-2 focus:ring-accent">Editar</button>
+                <button class="bg-danger hover:bg-red-700 text-white px-3 py-1 rounded transition-all focus:outline-none focus:ring-2 focus:ring-danger">Excluir</button>
+              </td>
+            </tr>
+            <tr class="hover:bg-primary/50 transition-colors cursor-pointer">
+              <td class="border border-secondary/50 px-4 py-2">Toalha</td>
+              <td class="border border-secondary/50 px-4 py-2">30</td>
+              <td class="border border-secondary/50 px-4 py-2">Roupa de Cama</td>
+              <td class="border border-secondary/50 px-4 py-2">
+                <button class="bg-accent hover:bg-accent-dark text-primary px-3 py-1 rounded mr-2 transition-all focus:outline-none focus:ring-2 focus:ring-accent">Editar</button>
+                <button class="bg-danger hover:bg-red-700 text-white px-3 py-1 rounded transition-all focus:outline-none focus:ring-2 focus:ring-danger">Excluir</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/boxicons@latest/js/boxicons.min.js"></script>
+  <script>
+    // Sidebar toggle functionality
+    const headerToggle = document.getElementById('header-toggle');
+    const navBar = document.getElementById('nav-bar');
+    const bodyPd = document.getElementById('body-pd');
+    const header = document.getElementById('header');
+
+    headerToggle.addEventListener('click', () => {
+      navBar.classList.toggle('show-nav');
+      header.classList.toggle('body-pd');
+      bodyPd.classList.toggle('body-pd');
+    });
+
+    // Filter input mask
+    function changeFiltro() {
+      let filtro = document.getElementById("filtro").value;
+      if (filtro == 2) {
+        $("#pesquisaFiltro").mask('000.000.000-00', {reverse: true});
+      } else {
+        $("#pesquisaFiltro").unmask();
+      }
+    }
+  </script>
+</body>
+</html>
