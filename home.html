@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Use Hotel - Sistema de Gestão Hoteleira</title>
+  <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏨</text></svg>" />
+  <!-- jQuery and Plugins -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1a2234',
+            secondary: '#2a3245',
+            accent: '#ff9800',
+            'accent-dark': '#e08800',
+            'accent-light': 'rgba(255, 152, 0, 0.2)',
+            success: '#4CAF50',
+            warning: '#FFC107',
+            danger: '#F44336',
+            info: '#2196F3',
+            violet: '#8B5CF6',
+            blue: '#3B82F6',
+            green: '#10B981',
+            red: '#EF4444',
+            yellow: '#F59E0B',
+            pink: '#EC4899',
+            indigo: '#6366F1',
+            purple: '#8B5CF6',
+            orange: '#F97316',
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'bounce-slow': 'bounce 2s infinite',
+            'spin-slow': 'spin 3s linear infinite',
+            'fade-in': 'fadeIn 0.5s ease-in',
+            'slide-in': 'slideIn 0.5s ease-in',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+            slideIn: {
+              '0%': { transform: 'translateY(-10px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' },
+            },
+          },
+          boxShadow: {
+            'inner-lg': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.15)',
+            'glow': '0 0 15px rgba(255, 152, 0, 0.5)',
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Select2 Custom Styles */
+    .select2-container--default .select2-selection--single {
+      background-color: rgba(42, 50, 69, 0.8) !important;
+      border: 1px solid rgba(255, 152, 0, 0.2) !important;
+      border-radius: 0.5rem !important;
+      height: 38px !important;
+      padding: 5px !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+      color: #ff9800 !important;
+      line-height: 28px !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+      height: 38px !important;
+    }
+
+    .select2-dropdown {
+      background-color: rgba(42, 50, 69, 0.95) !important;
+      border: 1px solid rgba(255, 152, 0, 0.2) !important;
+      border-radius: 0.5rem !important;
+      backdrop-filter: blur(8px);
+    }
+
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+      background-color: rgba(255, 152, 0, 0.2) !important;
+      color: #ff9800 !important;
+    }
+
+    .select2-container--default .select2-results__option[aria-selected=true] {
+      background-color: rgba(255, 152, 0, 0.4) !important;
+      color: white !important;
+    }
+
+    .select2-container--default .select2-search--dropdown .select2-search__field {
+      background-color: rgba(26, 34, 52, 0.8) !important;
+      border: 1px solid rgba(255, 152, 0, 0.2) !important;
+      color: #ff9800 !important;
+      border-radius: 0.25rem !important;
+    }
+
+    /* Loading animation */
+    .loading {
+      position: relative;
+      overflow: hidden;
+    }
+    .loading::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      animation: loading 1.5s infinite;
+    }
+    @keyframes loading {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    /* Tooltip styles */
+    .tooltip {
+      position: relative;
+    }
+    .tooltip:hover::before {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 0.5rem;
+      background: var(--primary);
+      color: white;
+      border-radius: 0.25rem;
+      font-size: 0.875rem;
+      white-space: nowrap;
+      z-index: 10;
+    }
+    /* Focus styles for keyboard navigation */
+    .focus-visible:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    /* Smooth transitions */
+    .transition-all {
+      transition: all 0.2s ease-in-out;
+    }
+
+    /* Hide scrollbar but keep functionality */
+    .no-scrollbar {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;  /* Chrome, Safari and Opera */
+    }
+
+    /* Compact form elements */
+    .compact-form {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: nowrap;
+    }
+    .compact-form > * {
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body id="body-pd" class="body-pd bg-primary text-white min-h-screen flex flex-col animate-fade-in">
+  <header class="header body-pd flex justify-between items-center p-4 border-b border-secondary shadow-inner-lg" id="header">
+    <div class="header_toggle cursor-pointer text-3xl hover:text-accent transition-colors" id="header-toggle">
+      <i class='bx bx-menu bx-x hover:animate-bounce-slow'></i>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden md:flex items-center gap-2 text-accent-light">
+        <i class="fas fa-user-circle text-xl"></i>
+        <span>Admin</span>
+      </div>
+      <a class="btn bg-secondary hover:bg-accent hover:shadow-glow text-accent hover:text-white px-3 py-1 rounded text-sm flex items-center gap-2 transition-all duration-300" href="index.html">
+        <i class="fa-solid fa-right-from-bracket"></i> Sair
+      </a>
+    </div>
+  </header>
+  <div class="flex flex-grow">
+  <nav class="l-navbar show-nav w-64 bg-secondary p-4 shadow-inner-lg animate-slide-in fixed md:relative z-50 h-full md:h-auto top-0 left-0 md:top-auto md:left-auto md:translate-x-0 transition-transform md:transition-none" id="nav-bar">
+    <div class="flex flex-col h-full">
+      <a class="nav_logo mb-6 block text-center transform hover:scale-105 transition-transform" href="#">
+        <div class="text-4xl text-accent mb-2"><i class="fas fa-hotel"></i></div>
+        <div class="text-xl font-bold text-accent">Use Hotel</div>
+      </a>
+      <div class="flex-grow space-y-2 overflow-y-auto">
+        <a href="home.html" class="nav_link flex items-center gap-3 p-2 text-white font-semibold rounded hover:text-accent hover:bg-primary/20 transition-all">
+          <i class='bx bx-grid-alt nav_icon text-xl'></i> <span class="nav_name">Home</span>
+        </a>
+        <a href="#" class="nav_link flex items-center gap-3 p-2 text-white rounded hover:text-accent hover:bg-primary/20 transition-all">
+          <i class='bx bx-user nav_icon text-xl'></i> <span class="nav_name">Clientes</span>
+        </a>
+        <a href="#" class="nav_link flex items-center gap-3 p-2 text-white rounded hover:text-accent hover:bg-primary/20 transition-all">
+          <i class='bx bx-car nav_icon text-xl'></i> <span class="nav_name">Estacionamento</span>
+        </a>
+        <a href="#" class="nav_link flex items-center gap-3 p-2 text-white rounded hover:text-accent hover:bg-primary/20 transition-all">
+          <i class='bx bx-hotel nav_icon text-xl'></i> <span class="nav_name">Acomodações</span>
+        </a>
+        <a href="#" class="nav_link flex items-center gap-3 p-2 text-white rounded hover:text-accent hover:bg-primary/20 transition-all">
+          <i class='bx bx-cabinet nav_icon text-xl'></i> <span class="nav_name">Estoque</span>
+        </a>
+        <a href="#" class="nav_link flex items-center gap-3 p-2 text-white rounded hover:text-accent hover:bg-primary/20 transition-all">
+          <i class='bx bx-fridge nav_icon text-xl'></i> <span class="nav_name">Frigobar</span>
+        </a>
+        <a href="#" class="nav_link flex items-center gap-3 p-2 text-white rounded hover:text-accent hover:bg-primary/20 transition-all">
+          <i class='bx bx-calendar-event nav_icon text-xl'></i> <span class="nav_name">Reservas</span>
+        </a>
+        <a href="#" class="nav_link flex items-center gap-3 p-2 text-white rounded hover:text-accent hover:bg-primary/20 transition-all">
+          <i class='bx bx-money-withdraw nav_icon text-xl'></i> <span class="nav_name">Financeiro</span>
+        </a>
+        <a href="#" class="nav_link flex items-center gap-3 p-2 text-white rounded hover:text-accent hover:bg-primary/20 transition-all">
+          <i class='bx bxs-credit-card-alt nav_icon text-xl'></i><span class="nav_name">Pagamentos</span>
+        </a>
+        <a href="#" class="nav_link flex items-center gap-3 p-2 text-white rounded hover:text-accent hover:bg-primary/20 transition-all">
+          <i class="bx bxs-building nav_icon text-xl"></i><span class="nav_name">Configurações do Hotel</span>
+        </a>
+      </div>
+      <div class="mt-4 pt-4 border-t border-primary/20">
+        <a href="#" class="nav_link flex items-center gap-3 p-2 text-white rounded hover:text-accent hover:bg-primary/20 transition-all">
+          <i class='bx bxs-lock-open nav_icon text-xl'></i> <span class="nav_name">Administrador</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+  <main class="flex-grow p-4 md:p-6 overflow-auto bg-gradient-to-br from-primary to-secondary">
+    <!-- Breadcrumb -->
+    <nav aria-label="Breadcrumb" class="mb-4 md:mb-6 flex items-center gap-2 text-accent-light animate-fade-in">
+      <ol class="inline-flex items-center space-x-1 md:space-x-3 text-sm md:text-base">
+        <li class="inline-flex items-center">
+          <a href="#" class="inline-flex items-center text-accent hover:text-accent-dark transition-colors" aria-current="page">
+            <i class="fas fa-home" aria-hidden="true"></i>
+            <span class="sr-only">Home</span>
+          </a>
+        </li>
+        <li>
+          <div class="flex items-center">
+            <i class="fas fa-chevron-right text-xs md:text-sm" aria-hidden="true"></i>
+            <a href="#" class="ml-1 text-accent" aria-current="page">Dashboard</a>
+          </div>
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Welcome Message -->
+    <section class="mb-6 md:mb-8 animate-slide-in" aria-labelledby="welcome-title">
+      <h1 id="welcome-title" class="text-2xl md:text-3xl font-bold text-accent mb-2">Bem-vindo ao Use Hotel</h1>
+      <p class="text-white text-sm md:text-base">Sistema de Gestão Hoteleira - Gerencie suas reservas e acomodações de forma eficiente</p>
+    </section>
+
+    <!-- Stats Grid -->
+    <section aria-label="Estatísticas do sistema" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="info-box bg-gradient-to-tr from-primary/80 to-secondary/80 backdrop-blur-md rounded-xl shadow-lg hover:shadow-glow flex items-center p-6 tooltip transition-all transform hover:scale-105" data-tooltip="Total de hóspedes atualmente no hotel" role="region" aria-live="polite" aria-atomic="true">
+        <span class="info-box-icon bg-primary/90 text-white rounded-xl p-5 mr-6 text-4xl shadow-inner-lg"><i class="fa-solid fa-users animate-pulse-slow" aria-hidden="true"></i></span>
+        <div class="info-box-content">
+          <span class="info-box-text text-accent-light text-sm uppercase tracking-wider font-semibold">Hospedes</span>
+          <div class="loading">
+            <span class="info-box-number text-white font-extrabold text-2xl">0 atualmente</span>
+          </div>
+        </div>
+      </div>
+      <div class="info-box bg-gradient-to-tr from-green-700/80 to-green-600/80 backdrop-blur-md rounded-xl shadow-lg hover:shadow-glow flex items-center p-6 tooltip transition-all transform hover:scale-105" data-tooltip="Total de acomodações disponíveis" role="region" aria-live="polite" aria-atomic="true">
+        <span class="info-box-icon bg-success/90 text-white rounded-xl p-5 mr-6 text-4xl shadow-inner-lg"><i class="fa-solid fa-house-chimney-window animate-pulse-slow" aria-hidden="true"></i></span>
+        <div class="info-box-content">
+          <span class="info-box-text text-accent-light text-sm uppercase tracking-wider font-semibold">Acomodações</span>
+          <div class="loading">
+            <span class="info-box-number text-white font-extrabold text-2xl">18 disponíveis</span>
+          </div>
+        </div>
+      </div>
+      <div class="info-box bg-gradient-to-tr from-blue-600/80 to-blue-500/80 backdrop-blur-md rounded-xl shadow-lg hover:shadow-glow flex items-center p-6 tooltip transition-all transform hover:scale-105" data-tooltip="Check-ins realizados hoje" role="region" aria-live="polite" aria-atomic="true">
+        <span class="info-box-icon bg-info/90 text-white rounded-xl p-5 mr-6 text-4xl shadow-inner-lg"><i class="fa-solid fa-door-open animate-pulse-slow" aria-hidden="true"></i></span>
+        <div class="info-box-content">
+          <span class="info-box-text text-accent-light text-sm uppercase tracking-wider font-semibold">Check-in realizados</span>
+          <div class="loading">
+            <span class="info-box-number text-white font-extrabold text-2xl">0 hoje</span>
+          </div>
+        </div>
+      </div>
+      <div class="info-box bg-gradient-to-tr from-red-600/80 to-red-500/80 backdrop-blur-md rounded-xl shadow-lg hover:shadow-glow flex items-center p-6 tooltip transition-all transform hover:scale-105" data-tooltip="Check-outs realizados hoje" role="region" aria-live="polite" aria-atomic="true">
+        <span class="info-box-icon bg-danger/90 text-white rounded-xl p-5 mr-6 text-4xl shadow-inner-lg"><i class="fa-solid fa-door-closed animate-pulse-slow" aria-hidden="true"></i></span>
+        <div class="info-box-content">
+          <span class="info-box-text text-accent-light text-sm uppercase tracking-wider font-semibold">Check-out realizados</span>
+          <div class="loading">
+            <span class="info-box-number text-white font-extrabold text-2xl">0 hoje</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Filter and Search Section -->
+    <div class="flex flex-wrap md:flex-nowrap items-center gap-2 border-b border-secondary/30 pb-4 mb-6 animate-fade-in">
+      <div class="flex items-center gap-1.5 overflow-x-auto py-1.5 no-scrollbar">
+        <button type="button" name="busca" value="0" class="filter-btn h-8 px-3 rounded-lg text-sm bg-secondary/80 backdrop-blur-sm text-accent hover:bg-accent hover:text-primary transition-all focus-visible shadow-lg hover:shadow-glow flex items-center gap-1.5 whitespace-nowrap" data-tooltip="Mostrar todas as acomodações">
+          <i class="fas fa-list-ul text-xs"></i> 
+          <span>Todas</span>
+        </button>
+        <button type="button" name="busca" value="1" class="filter-btn h-8 px-3 rounded-lg text-sm bg-success/90 backdrop-blur-sm text-white hover:bg-success transition-all focus-visible shadow-lg hover:shadow-glow flex items-center gap-1.5 whitespace-nowrap" data-tooltip="Mostrar acomodações disponíveis">
+          <i class="fas fa-check-circle text-xs"></i>
+          <span>Disponíveis</span>
+          <span class="bg-white/20 px-1.5 py-0.5 rounded-full text-xs font-semibold ml-1">18</span>
+        </button>
+        <button type="button" name="busca" value="2" class="filter-btn h-8 px-3 rounded-lg text-sm bg-info/90 backdrop-blur-sm text-white hover:bg-info transition-all focus-visible shadow-lg hover:shadow-glow flex items-center gap-1.5 whitespace-nowrap" data-tooltip="Mostrar reservas iniciadas">
+          <i class="fas fa-clock text-xs"></i>
+          <span>Iniciadas</span>
+          <span class="bg-white/20 px-1.5 py-0.5 rounded-full text-xs font-semibold ml-1">0</span>
+        </button>
+        <button type="button" name="busca" value="3" class="filter-btn h-8 px-3 rounded-lg text-sm bg-warning/90 backdrop-blur-sm text-white hover:bg-warning transition-all focus-visible shadow-lg hover:shadow-glow flex items-center gap-1.5 whitespace-nowrap" data-tooltip="Mostrar check-ins pendentes">
+          <i class="fas fa-sign-in-alt text-xs"></i>
+          <span>Check-in</span>
+          <span class="bg-white/20 px-1.5 py-0.5 rounded-full text-xs font-semibold ml-1">0</span>
+        </button>
+      </div>
+
+      <form id="searchForm" method="GET" class="compact-form ml-auto">
+        <select name="filtro" class="h-9 form-select rounded-lg border border-secondary/30 bg-secondary/80 backdrop-blur-sm text-accent px-3 pr-8 focus:outline-none focus:ring-2 focus:ring-accent appearance-none shadow-lg text-sm w-40" id="filtro" onchange="changeFiltro()">
+          <option value="1">Nome do cliente</option>
+          <option value="2">CPF do cliente</option>
+          <option value="3">Nome do quarto</option>
+          <option value="4">Número do quarto</option>
+          <option value="5">Número da reserva</option>
+        </select>
+        <div class="relative flex-grow md:flex-grow-0">
+          <input type="text" class="h-9 w-full md:w-56 rounded-l-lg border border-secondary/30 bg-secondary/80 backdrop-blur-sm text-accent pl-9 pr-3 focus:outline-none focus:ring-2 focus:ring-accent shadow-lg text-sm" placeholder="Pesquisar..." id="pesquisaFiltro" name="buscafiltro" />
+          <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-accent-light"></i>
+          <button type="submit" class="absolute right-0 top-0 h-full px-4 bg-accent hover:bg-accent-dark text-primary rounded-r-lg transition-all focus:outline-none focus:ring-2 focus:ring-accent shadow-lg hover:shadow-glow flex items-center gap-2 text-sm font-medium">
+            <i class="fas fa-search"></i>
+            <span class="hidden md:inline">Buscar</span>
+          </button>
+        </div>
+      </form>
+    </div>
+    <!-- Accommodation Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="card-dashboard bg-secondary/90 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-glow cursor-pointer transition-all duration-300 transform hover:scale-105 tooltip focus-visible group" onclick="window.location.href='#'" data-tooltip="Clique para fazer uma nova reserva">
+        <div class="header-card bg-success/90 text-white p-4 rounded-t-xl uppercase font-bold flex justify-between items-center">
+          <span class="nome-acomodacao text-lg">Apartamento</span>
+          <small class="numero-acomodacao bg-white/20 px-3 py-1 rounded-full text-sm"> Nº 1 </small>
+        </div>
+        <div class="card-body text-accent-light p-4 space-y-3">
+          <span class="desc-reserva flex items-center gap-3 tooltip group-hover:text-accent transition-colors" data-tooltip="Tipo de acomodação">
+            <i class="bx bx-home-smile text-xl"></i> Tipo: Suíte Master
+          </span>
+          <span class="desc-reserva flex items-center gap-3 tooltip group-hover:text-accent transition-colors" data-tooltip="Valor da diária">
+            <i class="bx bx-money text-xl"></i> Valor diária: R$ 140,00
+          </span>
+          <span class="desc-reserva flex items-center gap-3 tooltip group-hover:text-accent transition-colors" data-tooltip="Capacidade máxima de hóspedes">
+            <i class="bx bxs-user-plus text-xl"></i> Capacidade: 4
+          </span>
+          <span class="desc-reserva flex items-center gap-3 tooltip group-hover:text-accent transition-colors" data-tooltip="Data da próxima reserva">
+            <i class="bx bx-calendar-event text-xl"></i> Próxima Reserva:
+            <div class="loading inline-block w-20 h-4 bg-secondary/50 rounded animate-pulse"></div>
+          </span>
+        </div>
+        <div class="border-t border-secondary/30 p-4">
+          <a href="#" class="block w-full bg-success/10 border-2 border-success text-success py-2 rounded-lg text-center font-semibold hover:bg-success hover:text-white transition-all duration-300 focus-visible group-hover:shadow-glow">Nova reserva</a>
+        </div>
+      </div>
+
+      <div class="card-dashboard bg-secondary/90 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-glow cursor-pointer transition-all duration-300 transform hover:scale-105 tooltip focus-visible group" onclick="window.location.href='#'" data-tooltip="Clique para fazer uma nova reserva">
+        <div class="header-card bg-success/90 text-white p-4 rounded-t-xl uppercase font-bold flex justify-between items-center">
+          <span class="nome-acomodacao text-lg">Apartamento</span>
+          <small class="numero-acomodacao bg-white/20 px-3 py-1 rounded-full text-sm"> Nº 2 </small>
+        </div>
+        <div class="card-body text-accent-light p-4 space-y-3">
+          <span class="desc-reserva flex items-center gap-3 tooltip group-hover:text-accent transition-colors" data-tooltip="Tipo de acomodação">
+            <i class="bx bx-home-smile text-xl"></i> Tipo: Quarto
+          </span>
+          <span class="desc-reserva flex items-center gap-3 tooltip group-hover:text-accent transition-colors" data-tooltip="Valor da diária">
+            <i class="bx bx-money text-xl"></i> Valor diária: R$ 80,00
+          </span>
+          <span class="desc-reserva flex items-center gap-3 tooltip group-hover:text-accent transition-colors" data-tooltip="Capacidade máxima de hóspedes">
+            <i class="bx bxs-user-plus text-xl"></i> Capacidade: 2
+          </span>
+          <span class="desc-reserva flex items-center gap-3 tooltip group-hover:text-accent transition-colors" data-tooltip="Data da próxima reserva">
+            <i class="bx bx-calendar-event text-xl"></i> Próxima Reserva:
+            <div class="loading inline-block w-20 h-4 bg-secondary/50 rounded animate-pulse"></div>
+          </span>
+        </div>
+        <div class="border-t border-secondary/30 p-4">
+          <a href="#" class="block w-full bg-success/10 border-2 border-success text-success py-2 rounded-lg text-center font-semibold hover:bg-success hover:text-white transition-all duration-300 focus-visible group-hover:shadow-glow">Nova reserva</a>
+        </div>
+      </div>
+      <!-- Additional cards can be added similarly -->
+    </div>
+      <div class="row p-1 mt-3 text-center" id="nenhumRegistro" style="display:none;">
+        <h3>Nenhum registro encontrado</h3>
+      </div>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/boxicons@latest/js/boxicons.min.js"></script>
+  <script>
+    // Sidebar toggle functionality
+    const headerToggle = document.getElementById('header-toggle');
+    const navBar = document.getElementById('nav-bar');
+    const bodyPd = document.getElementById('body-pd');
+    const header = document.getElementById('header');
+
+    headerToggle.addEventListener('click', () => {
+      navBar.classList.toggle('show-nav');
+      header.classList.toggle('body-pd');
+      bodyPd.classList.toggle('body-pd');
+    });
+
+    // Filter input mask
+    function changeFiltro() {
+      let filtro = document.getElementById("filtro").value;
+      if (filtro == 2) {
+        $("#pesquisaFiltro").mask('000.000.000-00', {reverse: true});
+      } else {
+        $("#pesquisaFiltro").unmask();
+      }
+    }
+
+    // Initialize plugins and setup functionality
+    $(document).ready(function() {
+      // Initialize CPF mask
+      function initializeMask() {
+        const filtro = $('#filtro').val();
+        if (filtro === '2') {
+          $('#pesquisaFiltro').mask('000.000.000-00', {reverse: true});
+        } else {
+          $('#pesquisaFiltro').unmask();
+        }
+      }
+
+      // Initialize mask on page load
+      initializeMask();
+
+      // Handle filter change
+      $('#filtro').on('change', initializeMask);
+      
+      // Filter buttons functionality
+      $('.filter-btn').on('click', function() {
+        // Remove active state from all buttons
+        $('.filter-btn').removeClass('active bg-opacity-100').addClass('bg-opacity-90');
+        
+        // Add active state to clicked button
+        $(this).addClass('active bg-opacity-100').removeClass('bg-opacity-90');
+        
+        // Show loading animation
+        $('.loading').css('opacity', '0.5');
+        $('.card-dashboard').addClass('loading').css({
+          'opacity': '0.7',
+          'transform': 'scale(0.98)'
+        });
+        
+        // Simulate loading delay
+        setTimeout(() => {
+          $('.loading').css('opacity', '1');
+          $('.card-dashboard').removeClass('loading').css({
+            'opacity': '1',
+            'transform': 'scale(1)'
+          });
+        }, 800);
+      });
+
+      // Search form submit handler
+      $('#searchForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        // Disable form elements
+        const $form = $(this);
+        const $searchBtn = $form.find('button[type="submit"]');
+        const $searchIcon = $searchBtn.find('i');
+        const $searchText = $searchBtn.find('span');
+        
+        $form.find('input, select, button').prop('disabled', true);
+        $searchBtn.addClass('bg-accent-dark');
+        $searchIcon.removeClass('fa-search').addClass('fa-spinner animate-spin-slow');
+        $searchText.text('Buscando...');
+        
+        // Show loading state
+        $('.loading').css('opacity', '0.5');
+        $('.card-dashboard').addClass('loading').css({
+          'opacity': '0.7',
+          'transform': 'scale(0.98)'
+        });
+        
+        // Simulate search delay
+        setTimeout(() => {
+          // Reset form elements
+          $form.find('input, select, button').prop('disabled', false);
+          $searchBtn.removeClass('bg-accent-dark');
+          $searchIcon.removeClass('fa-spinner animate-spin-slow').addClass('fa-search');
+          $searchText.text('Buscar');
+          
+          // Reset loading state
+          $('.loading').css('opacity', '1');
+          $('.card-dashboard').removeClass('loading').css({
+            'opacity': '1',
+            'transform': 'scale(1)'
+          });
+          
+          // Show success message using notification system
+          showNotification('Busca realizada com sucesso!', 'success');
+        }, 800);
+      });
+    });
+
+    // Enhanced accessibility and keyboard navigation
+    document.addEventListener('keydown', function(e) {
+      // Add visual indicator for keyboard navigation
+      if (e.key === 'Tab') {
+        document.body.classList.add('user-is-tabbing');
+      }
+      
+      // Add keyboard shortcuts
+      if (e.altKey) {
+        switch(e.key) {
+          case 'h': // Alt + H for Home
+            window.location.href = 'home.html';
+            showNotification('Navegando para Home', 'info');
+            break;
+          case 'n': // Alt + N for New Reservation
+            document.querySelector('.card-dashboard a[href="#"]').click();
+            showNotification('Iniciando nova reserva', 'info');
+            break;
+          case 's': // Alt + S to focus search
+            e.preventDefault();
+            document.getElementById('pesquisaFiltro').focus();
+            showNotification('Modo de busca ativado', 'info');
+            break;
+          case 'f': // Alt + F to focus filter
+            e.preventDefault();
+            document.getElementById('filtro').focus();
+            showNotification('Modo de filtro ativado', 'info');
+            break;
+          case 'r': // Alt + R to refresh data
+            e.preventDefault();
+            $('.loading').css('opacity', '0.5');
+            setTimeout(() => {
+              $('.loading').css('opacity', '1');
+              showNotification('Dados atualizados', 'success');
+            }, 800);
+            break;
+          case 'm': // Alt + M to toggle menu
+            e.preventDefault();
+            headerToggle.click();
+            showNotification('Menu ' + (navBar.classList.contains('show-nav') ? 'fechado' : 'aberto'), 'info');
+            break;
+        }
+      }
+    });
+
+    // Remove tabbing indicator when using mouse
+    document.addEventListener('mousedown', function() {
+      document.body.classList.remove('user-is-tabbing');
+    });
+
+    // Enhanced loading animation for cards
+    function toggleCardLoading(show) {
+      const cards = document.querySelectorAll('.card-dashboard');
+      cards.forEach((card, index) => {
+        setTimeout(() => {
+          if (show) {
+            card.classList.add('loading');
+            card.style.opacity = '0.7';
+            card.style.transform = 'scale(0.98)';
+          } else {
+            card.classList.remove('loading');
+            card.style.opacity = '1';
+            card.style.transform = 'scale(1)';
+          }
+        }, index * 100); // Stagger the animations
+      });
+    }
+
+    // Add tooltip explaining keyboard shortcuts
+    const shortcutsTooltip = document.createElement('div');
+    shortcutsTooltip.className = 'fixed bottom-4 right-4 bg-secondary/90 text-accent-light p-6 rounded-xl shadow-lg backdrop-blur-sm border border-accent/20 transform transition-all duration-300 ease-in-out hidden hover:shadow-glow';
+    shortcutsTooltip.style.cssText = 'transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;';
+    shortcutsTooltip.innerHTML = `
+      <h3 class="text-accent font-semibold mb-2">Atalhos do Teclado</h3>
+      <ul class="space-y-2 text-sm min-w-[200px]">
+        <li class="flex items-center justify-between gap-4">
+          <kbd class="bg-primary px-2 py-1 rounded text-accent border border-accent/20 shadow-inner-lg min-w-[80px] text-center">Alt + H</kbd>
+          <span class="text-right">Home</span>
+        </li>
+        <li class="flex items-center justify-between gap-4">
+          <kbd class="bg-primary px-2 py-1 rounded text-accent border border-accent/20 shadow-inner-lg min-w-[80px] text-center">Alt + N</kbd>
+          <span class="text-right">Nova Reserva</span>
+        </li>
+        <li class="flex items-center justify-between gap-4">
+          <kbd class="bg-primary px-2 py-1 rounded text-accent border border-accent/20 shadow-inner-lg min-w-[80px] text-center">Alt + S</kbd>
+          <span class="text-right">Pesquisar</span>
+        </li>
+        <li class="flex items-center justify-between gap-4">
+          <kbd class="bg-primary px-2 py-1 rounded text-accent border border-accent/20 shadow-inner-lg min-w-[80px] text-center">Alt + F</kbd>
+          <span class="text-right">Filtro</span>
+        </li>
+        <li class="flex items-center justify-between gap-4">
+          <kbd class="bg-primary px-2 py-1 rounded text-accent border border-accent/20 shadow-inner-lg min-w-[80px] text-center">Alt + R</kbd>
+          <span class="text-right">Atualizar</span>
+        </li>
+        <li class="flex items-center justify-between gap-4">
+          <kbd class="bg-primary px-2 py-1 rounded text-accent border border-accent/20 shadow-inner-lg min-w-[80px] text-center">Alt + M</kbd>
+          <span class="text-right">Menu</span>
+        </li>
+        <li class="flex items-center justify-between gap-4">
+          <kbd class="bg-primary px-2 py-1 rounded text-accent border border-accent/20 shadow-inner-lg min-w-[80px] text-center">Alt + /</kbd>
+          <span class="text-right">Atalhos</span>
+        </li>
+      </ul>
+      <p class="text-xs text-accent-light mt-2">Pressione Alt + / para fechar</p>
+    `;
+    document.body.appendChild(shortcutsTooltip);
+
+    // Show/hide shortcuts tooltip with animation
+    document.addEventListener('keydown', function(e) {
+      if (e.altKey && e.key === '/') {
+        if (shortcutsTooltip.classList.contains('hidden')) {
+          shortcutsTooltip.classList.remove('hidden');
+          shortcutsTooltip.classList.add('animate-fade-in');
+          shortcutsTooltip.style.transform = 'scale(1)';
+          shortcutsTooltip.style.opacity = '1';
+        } else {
+          shortcutsTooltip.style.transform = 'scale(0.95)';
+          shortcutsTooltip.style.opacity = '0';
+          setTimeout(() => {
+            shortcutsTooltip.classList.add('hidden');
+            shortcutsTooltip.classList.remove('animate-fade-in');
+          }, 300);
+        }
+      }
+    });
+
+    // Notification system
+    const showNotification = (message, type = 'success') => {
+      const colors = {
+        success: 'bg-success/90',
+        error: 'bg-danger/90',
+        warning: 'bg-warning/90',
+        info: 'bg-info/90'
+      };
+
+      const notification = document.createElement('div');
+      notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-4 py-2 rounded-lg shadow-lg backdrop-blur-sm animate-fade-in z-50 flex items-center gap-2`;
+      
+      const icon = document.createElement('i');
+      icon.className = `fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}`;
+      
+      notification.appendChild(icon);
+      notification.appendChild(document.createTextNode(message));
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    };
+
+    // Example usage:
+    // showNotification('Operação realizada com sucesso!', 'success');
+    // showNotification('Erro ao processar requisição.', 'error');
+    // showNotification('Atenção! Dados incompletos.', 'warning');
+    // showNotification('Sistema atualizado.', 'info');
+  </script>
+
+  <!-- Notification container -->
+  <div id="notification-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+</body>
+</html>
