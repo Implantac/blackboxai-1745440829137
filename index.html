@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Use Hotel - Sistema de Gestão Hoteleira</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1a2234',
+            secondary: '#2a3245',
+            accent: '#ff9800',
+            'accent-dark': '#e08800',
+            'accent-light': 'rgba(255, 152, 0, 0.2)',
+            success: '#4CAF50',
+            warning: '#FFC107',
+            danger: '#F44336',
+            info: '#2196F3',
+            violet: '#8B5CF6',
+            blue: '#3B82F6',
+            green: '#10B981',
+            red: '#EF4444',
+            yellow: '#F59E0B',
+            pink: '#EC4899',
+            indigo: '#6366F1',
+            purple: '#8B5CF6',
+            orange: '#F97316',
+          },
+        },
+      },
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f9fafb;
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen justify-between bg-primary text-white">
+  <main class="flex-grow flex flex-col items-center justify-center px-6 text-center max-w-md mx-auto">
+    <div class="mb-8 w-48 mx-auto text-4xl font-bold text-accent">
+      <i class="fas fa-hotel mb-4"></i>
+      <div>Use Hotel</div>
+    </div>
+    <h1 class="text-3xl font-semibold mb-2 text-accent">Sistema de Gestão Hoteleira</h1>
+    <p class="text-accent-light mb-8">Faça login para acessar o sistema</p>
+    <form class="w-full" onsubmit="handleLogin(event)">
+      <div class="relative mb-4">
+        <i class="fas fa-user absolute left-3 top-1/2 -translate-y-1/2 text-accent-light"></i>
+        <input type="text" name="username" placeholder="Usuário" required class="w-full pl-10 pr-4 py-3 rounded border border-accent-light bg-secondary text-white placeholder-accent-light focus:outline-none focus:ring-2 focus:ring-accent" autocomplete="username" />
+      </div>
+      <div class="relative mb-6">
+        <i class="fas fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-accent-light"></i>
+        <input type="password" name="password" placeholder="Senha" required class="w-full pl-10 pr-4 py-3 rounded border border-accent-light bg-secondary text-white placeholder-accent-light focus:outline-none focus:ring-2 focus:ring-accent" autocomplete="current-password" />
+      </div>
+      <button type="submit" class="w-full bg-accent hover:bg-accent-dark text-primary font-semibold py-3 rounded transition-all duration-300 flex items-center justify-center gap-2 group">
+        <i class="fas fa-sign-in-alt group-hover:translate-x-1 transition-transform"></i>
+        <span>Acessar</span>
+      </button>
+    </form>
+  </main>
+  <footer class="bg-secondary border-t border-accent-light py-4 text-center text-accent-light text-sm">
+    <p>Bem Vindo a <span class="text-accent font-semibold">Use Hotel</span></p>
+    <p class="mt-1">Versão v2.0.0</p>
+    <p class="mt-1 text-xs max-w-xs mx-auto px-4">
+      <strong>Sistema de Gestão Hoteleira</strong><br />
+      Gerencie suas reservas e acomodações de forma eficiente e profissional.
+    </p>
+  </footer>
+  <script>
+    function handleLogin(event) {
+      event.preventDefault();
+      const form = event.target;
+      const username = form.username.value;
+      const password = form.password.value;
+      const button = form.querySelector('button');
+      const icon = button.querySelector('i');
+      const text = button.querySelector('span');
+
+      // Show loading state
+      button.disabled = true;
+      icon.className = 'fas fa-spinner animate-spin';
+      text.textContent = 'Verificando...';
+
+      // Simulate API call
+      setTimeout(() => {
+        if (username === 'admin' && password === 'admin') {
+          icon.className = 'fas fa-check text-success';
+          text.textContent = 'Sucesso!';
+          setTimeout(() => {
+            window.location.href = 'home.html';
+          }, 500);
+        } else {
+          button.disabled = false;
+          icon.className = 'fas fa-sign-in-alt';
+          text.textContent = 'Acessar';
+          alert('Usuário ou senha incorretos.');
+        }
+      }, 800);
+    }
+  </script>
+</body>
+</html>
